@@ -6,11 +6,11 @@
 			@input="inputFn"
 			:value="value"
 			:class="{
-				success: this.status === 'success',
-				error: this.status === 'error'
+				success: status === 'success',
+				error: status === 'error'
 			}"
 		/>
-		<div class="tips" v-show="this.status === 'error'">用户名错误</div>
+		<div class="tips" v-show="status === 'error'">{{ message }}</div>
 	</div>
 </template>
 
@@ -43,15 +43,23 @@ export default {
 			//怎么通过事件对象获取到值
 			// console.log(e.target); //能够获取到触发事件的元素
 			//e.target.value相当于document.querrySelector('input').value
-			this.$emit('input', e.target.value); //需要把input框的值传给父组件 子传父
+			const value = e.target.value;
+			this.$emit('input', value); //需要把input框的值传给父组件 子传父
 
-			//校验规则
+			//表单校验
+			this.validate(value); //因为下面的校验value用不了，所以这里需要传参
+		},
+		validate(value) {
+			//表单校验
+			//表单校验，需要给一个返回值，返回校验的状态
 			if (this.rule) {
 				//判断输入的value值是否符合正则
-				if (this.rule.test(e.target.value)) {
+				if (this.rule.test(value)) {
 					this.status = 'success';
+					return true;
 				} else {
 					this.status = 'error';
+					return false;
 				}
 				console.log(this.status);
 			}

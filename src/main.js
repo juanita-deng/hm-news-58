@@ -9,7 +9,16 @@ import axios from 'axios'; //导入ajax，为了注册全局ajax用
 // axios的优化
 Vue.prototype.$axios = axios; //把axios绑定到vue的原型上，所有的组件就可以通过this.$axios({})发送请求
 axios.defaults.baseURL = 'http://localhost:3000'; //axios在发请求的时候，把url的路径自动拼接上baseURL
-Vue.config.productionTip = false; //去掉控制提示信息
+
+//--------vant-ui处理(方式一：全局导入,不推荐)---------
+// import Vant from 'vant';
+// import 'vant/lib/index.css';
+// Vue.use(Vant); //使用vant插件
+//-------vant-ui处理(方式二：按需导入,推荐)
+import { Button, Field, Toast } from 'vant';
+Vue.use(Button);
+Vue.use(Field);
+Vue.use(Toast);
 
 // ---------------------------
 //注册全局组件
@@ -22,6 +31,7 @@ Vue.component('hm-logo', HmLogo);
 Vue.component('hm-button', HmButton);
 Vue.component('hm-input', HmInput);
 
+Vue.config.productionTip = false; //去掉控制提示信息
 // const vm = new Vue({
 //   el:'#app',
 //   render:function(createElement) {
