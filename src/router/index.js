@@ -13,9 +13,10 @@ const router = new VueRouter({
 	routes: [
 		//配置路由的规则
 		{ path: '/', redirect: '/login' },
-		{ path: '/login', component: Login },
-		{ path: '/register', component: Register },
-		{ path: '/user', component: User }
+		//命名路由：给每一个路由规则起一个名字，指定name即可
+		{ path: '/login', component: Login, name: 'login' },
+		{ path: '/register', component: Register, name: 'register' },
+		{ path: '/user', component: User, name: 'user' }
 	]
 });
 
