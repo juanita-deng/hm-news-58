@@ -20,4 +20,16 @@ const router = new VueRouter({
 	]
 });
 
+//在导出路由之前进行注册全局的导航守卫  登录拦截
+router.beforeEach(function(to, from, next) {
+	console.log('所有的路由跳转都必须经过导航守卫');
+	// console.log('to:', to);//参数to:到哪里去
+	// console.log('from:', from);//参数from:从哪里来
+	const token = localStorage.getItem('token');
+	if (to.path === '/user' && !token) {
+		next('/login'); //如果去的是user并且还没有token,就去登录页
+	} else {
+		next(); //放行
+	}
+});
 export default router;

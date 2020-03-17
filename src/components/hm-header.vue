@@ -20,9 +20,10 @@ export default {};
 	display: flex;
 	height: 40px;
 	line-height: 40px;
+	border-bottom: 1px solid #ccc;
 	.header-left,
 	.header-right {
-		width: 30px;
+		width: 40px;
 		text-align: center;
 		font-weight: 700;
 	}

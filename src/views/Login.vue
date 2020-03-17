@@ -23,7 +23,8 @@
 
 		<hm-button @click="login">登录</hm-button>
 		<div class="go-register">
-			没有账号？去<router-link to="/register">注册</router-link>
+			没有账号？去
+			<router-link to="/register">注册</router-link>
 		</div>
 	</div>
 </template>
@@ -52,12 +53,17 @@ export default {
 					password: this.password
 				}
 			}).then(res => {
-				// console.log(res);//res.data才是后台返回的数据
-				if (res.data.statusCode === 200) {
-					this.$toast.success(res.data.message);
+				console.log(res.data); //res.data才是后台返回的数据
+				const { statusCode, message, data } = res.data;
+				if (statusCode === 200) {
+					this.$toast.success(message);
+					//去个人中心前添加token和user_id,后面个人中心数据渲染要用
+					localStorage.setItem('token', data.token);
+					localStorage.setItem('user_id', data.user.id);
+
 					this.$router.push('/user'); //登陆成功去用户中心
 				} else {
-					this.$toast.fail(res.data.message);
+					this.$toast.fail(message);
 				}
 			});
 		}
