@@ -11,11 +11,26 @@ import axios from 'axios'; //导入ajax，为了注册全局ajax用
 // import 'vant/lib/index.css';
 // Vue.use(Vant); //使用vant插件
 //-------vant-ui处理(方式二：全局注册按需导入,推荐)
-import { Button, Field, Toast, Dialog } from 'vant';
+import {
+	Button,
+	Field,
+	Toast,
+	Dialog,
+	Radio,
+	RadioGroup,
+	Cell,
+	CellGroup,
+	Uploader
+} from 'vant';
 Vue.use(Button);
 Vue.use(Field);
 Vue.use(Toast);
 Vue.use(Dialog);
+Vue.use(Radio);
+Vue.use(RadioGroup);
+Vue.use(Cell);
+Vue.use(CellGroup);
+Vue.use(Uploader);
 
 // axios的优化
 Vue.prototype.$axios = axios; //把axios绑定到vue的原型上，所有的组件就可以通过this.$axios({})发送请求
@@ -26,7 +41,7 @@ axios.defaults.baseURL = 'http://localhost:3000'; //axios在发请求的时候�
 // 优化:判断所有的请求响应，如果某个请求的状态码是401，并且提示消息是“用户信息验证失败”
 //      就拦截跳转到登录页
 axios.interceptors.response.use(res => {
-	console.log('所有的axios的响应会先经过拦截器', res);
+	// console.log('所有的axios的响应会先经过拦截器', res);
 	const { statusCode, message } = res.data;
 	if (statusCode === 401 && message === '用户信息验证失败') {
 		router.push('/login'); //注意：此处不是vue不能用this.$router,可以用router变量代替
@@ -34,7 +49,16 @@ axios.interceptors.response.use(res => {
 		localStorage.removeItem('user_id'); //删除过期的token,user_id
 		Toast.fail(message); //此处不能用this.$toast原理同上
 	}
-	return res;
+	return res; //一定要有返回值
+});
+//问题：每次都要获取token,user_id
+//解决：设置请求拦截器
+axios.interceptors.request.use(config => {
+	console.log('拦截了所有的请求', config);
+	//统一给所有的请求添加token 则其他页面的设置响应头里的token可以省去了
+	const token = localStorage.getItem('token');
+	config.headers.Authorization = token;
+	return config; //一定要有返回值
 });
 
 // ------注册全局组件---------------------

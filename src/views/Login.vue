@@ -39,7 +39,7 @@ export default {
 			//登陆时也需要表单校验，也所以需要表单校验信息的提醒
 			const result1 = this.$refs.username.validate(this.username);
 			const result2 = this.$refs.password.validate(this.password);
-			console.log(result1, result1);
+			// console.log(result1, result1);
 
 			//如果校验成功,就发送请求，否则不发送请求
 			if (!result1 || !result2) {
@@ -75,7 +75,7 @@ export default {
 		};
 	},
 	created() {
-		console.log(this.$route);
+		// console.log(this.$route);
 		this.username = this.$route.params.username;
 		this.password = this.$route.params.password;
 	}
