@@ -9,7 +9,10 @@ import Login from '../views/Login.vue'; //导入登录组件
 import Register from '../views/Register.vue'; //导入注册组件
 import User from '../views/User.vue'; //导入个人中心组件
 import Edit from '../views/Edit.vue'; //导入个人中心组件
-
+import Test from '../views/Test.vue'; //导入个人中心组件
+import Focus from '../views/Focus.vue'; //导入我的关注
+import Comments from '../views/Comments.vue'; //导入我的评论
+import Collection from '../views/Collection.vue'; //导入我的收藏collection
 const router = new VueRouter({
 	routes: [
 		//配置路由的规则
@@ -18,7 +21,11 @@ const router = new VueRouter({
 		{ path: '/login', component: Login, name: 'login' },
 		{ path: '/register', component: Register, name: 'register' },
 		{ path: '/user', component: User, name: 'user' },
-		{ path: '/edit', component: Edit, name: 'edit' }
+		{ path: '/edit', component: Edit, name: 'edit' },
+		{ path: '/test', component: Test, name: 'test' },
+		{ path: '/focus', component: Focus, name: 'focus' },
+		{ path: '/comments', component: Comments, name: 'comments' },
+		{ path: '/collection', component: Collection, name: 'collection' }
 	]
 });
 

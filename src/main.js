@@ -20,7 +20,8 @@ import {
 	RadioGroup,
 	Cell,
 	CellGroup,
-	Uploader
+	Uploader,
+	List
 } from 'vant';
 Vue.use(Button);
 Vue.use(Field);
@@ -31,6 +32,7 @@ Vue.use(RadioGroup);
 Vue.use(Cell);
 Vue.use(CellGroup);
 Vue.use(Uploader);
+Vue.use(List);
 
 // axios的优化
 Vue.prototype.$axios = axios; //把axios绑定到vue的原型上，所有的组件就可以通过this.$axios({})发送请求
@@ -54,7 +56,7 @@ axios.interceptors.response.use(res => {
 //问题：每次都要获取token,user_id
 //解决：设置请求拦截器
 axios.interceptors.request.use(config => {
-	console.log('拦截了所有的请求', config);
+	// console.log('拦截了所有的请求', config);
 	//统一给所有的请求添加token 则其他页面的设置响应头里的token可以省去了
 	const token = localStorage.getItem('token');
 	config.headers.Authorization = token;
@@ -76,7 +78,7 @@ Vue.component('hm-navbar', HmNavBar);
 
 //-------注册全局过滤器-------------------
 import moment from 'moment';
-Vue.filter('date', input => moment(input).format('YYYY-MM-DD'));
+Vue.filter('date', (input, str = 'YYYY-MM-DD') => moment(input).format(str)); //str设置默认参数
 
 Vue.config.productionTip = false; //去掉控制提示信息
 // const vm = new Vue({

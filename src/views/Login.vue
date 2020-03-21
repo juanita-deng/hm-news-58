@@ -33,7 +33,8 @@
 // import axios from 'axios';//改成全局的了，在main.js中引入了
 export default {
 	methods: {
-		login() {
+		async login() {
+			//改成promise
 			// console.log('登录了');
 
 			//登陆时也需要表单校验，也所以需要表单校验信息的提醒
@@ -45,27 +46,32 @@ export default {
 			if (!result1 || !result2) {
 				return;
 			}
-			this.$axios({
+
+			// this.$axios({
+			const res = await this.$axios({
 				url: '/login',
 				method: 'post',
 				data: {
 					username: this.username,
 					password: this.password
 				}
-			}).then(res => {
-				console.log(res.data); //res.data才是后台返回的数据
-				const { statusCode, message, data } = res.data;
-				if (statusCode === 200) {
-					this.$toast.success(message);
-					//去个人中心前添加token和user_id,后面个人中心数据渲染要用
-					localStorage.setItem('token', data.token);
-					localStorage.setItem('user_id', data.user.id);
-
-					this.$router.push('/user'); //登陆成功去用户中心
-				} else {
-					this.$toast.fail(message);
-				}
 			});
+			// .then(res => {
+
+			console.log(res.data); //res.data才是后台返回的数据
+			const { statusCode, message, data } = res.data;
+			if (statusCode === 200) {
+				this.$toast.success(message);
+				//去个人中心前添加token和user_id,后面个人中心数据渲染要用
+				localStorage.setItem('token', data.token);
+				localStorage.setItem('user_id', data.user.id);
+
+				this.$router.push('/user'); //登陆成功去用户中心
+			} else {
+				this.$toast.fail(message);
+			}
+
+			// });
 		}
 	},
 	data() {

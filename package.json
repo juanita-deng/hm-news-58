@@ -23,6 +23,7 @@
     "moment": "^2.24.0",
     "postcss-px2rem": "^0.3.0",
     "vant-ui": "^2.0.2",
+    "vue-cropper": "^0.5.2",
     "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [

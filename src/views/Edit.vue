@@ -5,11 +5,23 @@
 		<div class="avatar">
 			<img :src="$axios.defaults.baseURL + info.head_img" alt />
 			<!-- 头像上传组件 -->
-			<van-uploader
-				:after-read="afterRead"
-				:before-read="beforeread"
-				class="uploader"
-			/>
+			<van-uploader :after-read="afterRead" class="uploader" />
+		</div>
+
+		<!-- 裁剪头像的遮罩 -->
+		<div class="mask" v-show="show4">
+			<van-button class="crop" type="primary" @click="crop">裁剪</van-button>
+			<van-button class="cancel" type="info" @click="cancel">取消</van-button>
+			<vue-cropper
+				ref="cropper"
+				:img="img"
+				:outputSize="1"
+				:info="true"
+				:autoCrop="true"
+				:autoCropWidth="150"
+				:autoCropHeight="150"
+				:fixed="true"
+			></vue-cropper>
 		</div>
 
 		<hm-navbar title="昵称" :content="info.nickname" @clickFn="showNickname">
@@ -66,6 +78,8 @@
 </template>
 
 <script>
+//局部引入图片裁剪的插件
+import { VueCropper } from 'vue-cropper';
 export default {
 	data() {
 		return {
@@ -76,56 +90,66 @@ export default {
 			show1: false, //用于修改昵称弹窗的显示和隐藏
 			show2: false, //用于密码框弹窗的显示和隐藏
 			show3: false, //用于修改性别弹窗的显示和隐藏
+			show4: false, //用于裁剪图片的遮罩的显示和隐藏
 			nickname: '', //用于昵称回显
 			password: '', //用于修改密码
 			gender: '', //用于修改性别
-			head_img: '' //用于修改上传的图片
+			head_img: '', //用于修改上传的图片
+			img: '' //用于遮罩需要裁剪的图片的显示
 		};
 	},
 	created() {
 		this.getInfo(); //获取个人信息
 	},
+	components: {
+		VueCropper //修改图片的组件
+	},
 	methods: {
-		getInfo() {
+		async getInfo() {
 			// 发送ajax请求,渲染个人信息
 			const user_id = localStorage.getItem('user_id');
 			const token = localStorage.getItem('token');
-			this.$axios({
+			const res = await this.$axios({
 				url: `/user/+${user_id}`,
 				method: 'get',
 				headers: {
 					Authorization: token
 				}
-			}).then(res => {
-				// console.log(res);
-				const { message, statusCode, data } = res.data;
-				if (statusCode === 200 && message === '获取成功') {
-					this.info = data;
-					// console.log(this.info);
-				}
 			});
+
+			// .then(res => {
+			// console.log(res);
+			const { message, statusCode, data } = res.data;
+			if (statusCode === 200 && message === '获取成功') {
+				this.info = data;
+				// console.log(this.info);
+			}
+			// });
 		},
-		editUser(data) {
+		async editUser(data) {
 			//修改用户信息，接收需要修改的数据
 			const token = localStorage.getItem('token');
 			const user_id = localStorage.getItem('user_id');
-			this.$axios({
+			const res = await this.$axios({
 				url: `/user_update/${user_id}`,
 				method: 'post',
 				data, //根据需求提供,作为形参传出去，由外面提供
 				headers: {
 					Authorization: token
 				}
-			}).then(res => {
-				// console.log(res);
-				const { statusCode, message, data } = res.data;
-				if (statusCode === 200 && message === '修改成功') {
-					//重新渲染
-					this.getInfo();
-					//给一个修改成功的提示
-					this.$toast.success(message);
-				}
 			});
+
+			// .then(res => {
+			// console.log(res);
+			const { statusCode, message } = res.data;
+			if (statusCode === 200 && message === '修改成功') {
+				//重新渲染
+				this.getInfo();
+				//给一个修改成功的提示
+				this.$toast.success(message);
+			}
+
+			// });
 		},
 		showNickname() {
 			//显示修改昵称的弹窗
@@ -186,48 +210,84 @@ export default {
 			});
 		},
 		afterRead(file) {
-			// console.log(file);
+			// console.log(file);//原图片的信息
+			this.show4 = true; //显示遮罩
+			this.img = file.content; //用于裁剪图片的展示 content是图片的base64编码
 			//文件上传完毕后会触发after-read回调函数，
 			//获取到对应的file对象
 
+			//上传前需要裁剪
+
 			//需要Ajax通过formdata异步的上传文件
-			const fd = new FormData();
-			fd.append('file', file.file);
-			const token = localStorage.getItem('token');
-			this.$axios({
-				method: 'post',
-				url: '/upload',
-				headers: {
-					Authorization: token
-				},
-				data: fd
-			}).then(res => {
-				// console.log(res.data);
-				const { statusCode, data } = res.data;
-				if (statusCode === 200) {
-					//发送ajax请求，渲染数据
-					console.log(data.url);
-					this.editUser({
-						//能够拿到上传的图片的地址，还需要修改掉用户的图像
-						head_img: data.url
-					});
-				}
+			// const fd = new FormData();
+			// fd.append('file', file.file);
+			// const token = localStorage.getItem('token');
+			// this.$axios({
+			// 	method: 'post',
+			// 	url: '/upload',
+			// 	headers: {
+			// 		Authorization: token
+			// 	},
+			// 	data: fd
+			// }).then(res => {
+			// 	// console.log(res.data);
+			// 	const { statusCode, data } = res.data;
+			// 	if (statusCode === 200) {
+			// 		//发送ajax请求，渲染数据
+			// 		console.log(data.url);
+			// 		this.editUser({
+			// 			//能够拿到上传的图片的地址，还需要修改掉用户的图像
+			// 			head_img: data.url
+			// 		});
+			// 	}
+			// });
+		},
+		//下面已经加了裁剪大小及格式，此处则不需要校验
+		// beforeread(file) {
+		// 	//图片上传的校验 只接受200k以下的jpg格式文件
+		// 	//van-uploader中:beforeread="function"
+		// 	//返回true表示校验通过，false表示校验失败
+		// 	console.log(file);
+		// 	if (file.size / 1024 >= 200) {
+		// 		this.$toast.fail('图片上传不能超过200k');
+		// 		return false;
+		// 	}
+		// 	if (file.type !== 'image/jpeg') {
+		// 		this.$toast('图片上传必须是jpg图片');
+		// 		return false;
+		// 	}
+		// 	return true;
+		// },
+		crop() {
+			//裁剪功能
+			//获取到裁剪的图片并发送Ajax异步上传
+			this.$refs.cropper.getCropBlob(data => {
+				// console.log(data); //裁剪后的图片
+				//发送ajax请求异步上传
+				const fd = new FormData();
+				fd.append('file', data);
+				this.$axios({
+					url: '/upload',
+					method: 'post',
+					data: fd
+				})
+				.then(res => {
+					// console.log(res);
+					const { statusCode, message, data } = res.data;
+					if (statusCode === 200) {
+						// console.log(data.url);
+						//裁剪头像渲染
+						this.editUser({
+							head_img: data.url
+						});
+						//让裁剪框隐藏
+						this.show4 = false;
+					}
+				});
 			});
 		},
-		beforeread(file) {
-			//图片上传的校验 只接受200k以下的jpg格式文件
-			//van-uploader中:beforeread="function"
-			//返回true表示校验通过，false表示校验失败
-			console.log(file);
-			if (file.size / 1024 >= 200) {
-				this.$toast.fail('图片上传不能超过200k');
-				return false;
-			}
-			if (file.type !== 'image/jpeg') {
-				this.$toast('图片上传必须是jpg图片');
-				return false;
-			}
-			return true;
+		cancel() {
+			this.show4 = false; //取消让遮罩隐藏
 		}
 	}
 };
@@ -259,6 +319,24 @@ export default {
 	.van-field {
 		border: 1px solid #ccc;
 		margin: 10px 0;
+	}
+	//遮罩样式
+	.mask {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0;
+	}
+	//裁剪和取消按钮
+	.crop {
+		position: absolute;
+		left: 0;
+		z-index: 2;
+	}
+	.cancel {
+		position: absolute;
+		right: 0;
+		z-index: 2;
 	}
 }
 </style>
