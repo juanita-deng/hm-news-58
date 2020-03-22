@@ -13,10 +13,13 @@ import Test from '../views/Test.vue'; //导入个人中心组件
 import Focus from '../views/Focus.vue'; //导入我的关注
 import Comments from '../views/Comments.vue'; //导入我的评论
 import Collection from '../views/Collection.vue'; //导入我的收藏collection
+import Home from '../views/Home.vue'; //导入首页
+
 const router = new VueRouter({
 	routes: [
 		//配置路由的规则
-		{ path: '/', redirect: '/login' },
+		// { path: '/', redirect: '/login' },
+		{ path: '/', component: Home, name: 'home' },
 		//命名路由：给每一个路由规则起一个名字，指定name即可
 		{ path: '/login', component: Login, name: 'login' },
 		{ path: '/register', component: Register, name: 'register' },
@@ -30,7 +33,7 @@ const router = new VueRouter({
 });
 
 //在导出路由之前进行注册全局的导航守卫  登录拦截
-const authUrl = ['/user', '/edit']; //需要授权的路径，需要登陆才能访问的路径
+const authUrl = ['/user', '/edit', '/focus', '/comments', '/collection']; //需要授权的路径，需要登陆才能访问的路径
 router.beforeEach(function(to, from, next) {
 	// console.log('所有的路由跳转都必须经过导航守卫');
 	// console.log('to:', to);//参数to:到哪里去
