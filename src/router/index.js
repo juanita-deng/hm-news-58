@@ -14,6 +14,13 @@ import Focus from '../views/Focus.vue'; //导入我的关注
 import Comments from '../views/Comments.vue'; //导入我的评论
 import Collection from '../views/Collection.vue'; //导入我的收藏collection
 import Home from '../views/Home.vue'; //导入首页
+import Search from '../views/Search.vue'; //导入搜索页
+
+//全局修改router的原型上的push方法
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+	return originalPush.call(this, location).catch(err => err);
+};
 
 const router = new VueRouter({
 	routes: [
@@ -28,7 +35,8 @@ const router = new VueRouter({
 		{ path: '/test', component: Test, name: 'test' },
 		{ path: '/focus', component: Focus, name: 'focus' },
 		{ path: '/comments', component: Comments, name: 'comments' },
-		{ path: '/collection', component: Collection, name: 'collection' }
+		{ path: '/collection', component: Collection, name: 'collection' },
+		{ path: '/search', component: Search, name: 'search' }
 	]
 });
 
@@ -42,7 +50,8 @@ router.beforeEach(function(to, from, next) {
 	const token = localStorage.getItem('token');
 	//如果去个人中心，必须先登陆
 	if (authUrl.includes(to.path) && !token) {
-		next('/login'); //如果去的是user并且还没有token,就去登录页
+		// next('/login'); //如果去的是user并且还没有token,就去登录页
+		router.push('/login'); //不推荐使用next()一般只用于放行,否则未登录的从首页跳转到个人中心会出现报错问题
 	} else {
 		next(); //放行
 	}

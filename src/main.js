@@ -21,7 +21,9 @@ import {
 	Cell,
 	CellGroup,
 	Uploader,
-	List
+	List,
+	Tab,
+	Tabs
 } from 'vant';
 Vue.use(Button);
 Vue.use(Field);
@@ -33,6 +35,8 @@ Vue.use(Cell);
 Vue.use(CellGroup);
 Vue.use(Uploader);
 Vue.use(List);
+Vue.use(Tab);
+Vue.use(Tabs);
 
 // axios的优化
 Vue.prototype.$axios = axios; //把axios绑定到vue的原型上，所有的组件就可以通过this.$axios({})发送请求
@@ -59,7 +63,10 @@ axios.interceptors.request.use(config => {
 	// console.log('拦截了所有的请求', config);
 	//统一给所有的请求添加token 则其他页面的设置响应头里的token可以省去了
 	const token = localStorage.getItem('token');
-	config.headers.Authorization = token;
+	//如有token，我们就给请求添加token
+	if (token) {
+		config.headers.Authorization = token;
+	}
 	return config; //一定要有返回值
 });
 
@@ -68,13 +75,15 @@ import HmHeader from './components/hm-header'; //导入头部组件
 import HmLogo from './components/hm-logo.vue'; //导入logo组件
 import HmButton from './components/hm-button'; //导入按钮组件
 import HmInput from './components/hm-input.vue'; //导入input组件
-import HmNavBar from './components/hm-navbar.vue'; //导入input组件
+import HmNavBar from './components/hm-navbar.vue'; //导入导航条组件
+import HmArticle from './components/hm-article.vue'; //导入文章组件
 
 Vue.component('hm-header', HmHeader);
 Vue.component('hm-logo', HmLogo);
 Vue.component('hm-button', HmButton);
 Vue.component('hm-input', HmInput);
 Vue.component('hm-navbar', HmNavBar);
+Vue.component('hm-article', HmArticle);
 
 //-------注册全局过滤器-------------------
 import moment from 'moment';
