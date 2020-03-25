@@ -58,7 +58,7 @@ export default {
 			});
 			// .then(res => {
 
-			console.log(res.data); //res.data才是后台返回的数据
+			// console.log(res.data); //res.data才是后台返回的数据
 			const { statusCode, message, data } = res.data;
 			if (statusCode === 200) {
 				this.$toast.success(message);
@@ -66,7 +66,12 @@ export default {
 				localStorage.setItem('token', data.token);
 				localStorage.setItem('user_id', data.user.id);
 
-				this.$router.push('/user'); //登陆成功去用户中心
+				//根据路由参数params里的back判断是否需要回跳
+				if (this.$route.params.back) {
+					this.$router.back(); //点击关注或点赞回跳
+				} else {
+					this.$router.push('/user'); //登陆成功去用户中心
+				}
 			} else {
 				this.$toast.fail(message);
 			}
@@ -81,7 +86,7 @@ export default {
 		};
 	},
 	created() {
-		// console.log(this.$route);
+		console.log(this.$route);
 		this.username = this.$route.params.username;
 		this.password = this.$route.params.password;
 	}

@@ -1,5 +1,6 @@
 <template>
-	<div class="hm-article">
+	<!-- 点击任意文章去文章详情  -->
+	<div class="hm-article" @click="$router.push(`/article-detail/${post.id}`)">
 		<div class="list">
 			<!-- 
       如果type为2说明是视频类文章 

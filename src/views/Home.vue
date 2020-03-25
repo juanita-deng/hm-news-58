@@ -29,8 +29,7 @@
 						:post="article"
 						v-for="article in articleList"
 						:key="article.id"
-					>
-					</hm-article>
+					></hm-article>
 				</van-list>
 			</van-tab>
 		</van-tabs>
@@ -84,8 +83,14 @@ export default {
 			const { statusCode, data } = res.data;
 			if (statusCode === 200) {
 				// this.articleList = data;
+
+				//由于频繁切换,会导致数据清空不及时
+				//如果页码值还是1,并且articleList种还有数据
+				if (this.articleList.length > 0 && this.pageIndex === 1) {
+					this.articleList = [];
+				}
 				this.articleList = [...this.articleList, ...data];
-				console.log(this.articleList);
+				// console.log(this.articleList);
 				//请求结束时需要将loading的状态改成false(以便获取更多的数据)
 				this.loading = false;
 				//判断还有没有更多数据

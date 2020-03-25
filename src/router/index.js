@@ -4,6 +4,11 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
+//全局修改router的原型上的push方法
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+	return originalPush.call(this, location).catch(err => err);
+};
 
 import Login from '../views/Login.vue'; //导入登录组件
 import Register from '../views/Register.vue'; //导入注册组件
@@ -15,12 +20,7 @@ import Comments from '../views/Comments.vue'; //导入我的评论
 import Collection from '../views/Collection.vue'; //导入我的收藏collection
 import Home from '../views/Home.vue'; //导入首页
 import Search from '../views/Search.vue'; //导入搜索页
-
-//全局修改router的原型上的push方法
-const originalPush = VueRouter.prototype.push;
-VueRouter.prototype.push = function push(location) {
-	return originalPush.call(this, location).catch(err => err);
-};
+import articleDetail from '../views/ArticleDetail.vue'; //导入文章详情
 
 const router = new VueRouter({
 	routes: [
@@ -36,7 +36,12 @@ const router = new VueRouter({
 		{ path: '/focus', component: Focus, name: 'focus' },
 		{ path: '/comments', component: Comments, name: 'comments' },
 		{ path: '/collection', component: Collection, name: 'collection' },
-		{ path: '/search', component: Search, name: 'search' }
+		{ path: '/search', component: Search, name: 'search' },
+		{
+			path: '/article-detail/:id', //动态路由
+			component: articleDetail,
+			name: 'article-detail'
+		}
 	]
 });
 
