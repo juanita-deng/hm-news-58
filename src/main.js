@@ -77,6 +77,7 @@ import HmButton from './components/hm-button'; //导入按钮组件
 import HmInput from './components/hm-input.vue'; //导入input组件
 import HmNavBar from './components/hm-navbar.vue'; //导入导航条组件
 import HmArticle from './components/hm-article.vue'; //导入文章组件
+import HmComments from './components/hm-comments.vue'; //导入评论组件
 
 Vue.component('hm-header', HmHeader);
 Vue.component('hm-logo', HmLogo);
@@ -84,11 +85,25 @@ Vue.component('hm-button', HmButton);
 Vue.component('hm-input', HmInput);
 Vue.component('hm-navbar', HmNavBar);
 Vue.component('hm-article', HmArticle);
+Vue.component('hm-comments', HmComments);
 
 //-------注册全局过滤器-------------------
 import moment from 'moment';
 Vue.filter('date', (input, str = 'YYYY-MM-DD') => moment(input).format(str)); //str设置默认参数
-
+//评论区的过滤器
+Vue.filter('date2', input => {
+	const time = new Date(input);
+	const now = new Date();
+	const hour = ((now - time) / 1000 / 60 / 60) | 0;
+	// console.log(hour);
+	if (hour < 1) {
+		return '1小时内';
+	} else if (hour < 24) {
+		return hour + '小时前';
+	} else {
+		return moment(input).format('YYYY-MM-DD HH:mm:ss');
+	}
+});
 Vue.config.productionTip = false; //去掉控制提示信息
 // const vm = new Vue({
 //   el:'#app',
