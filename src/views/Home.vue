@@ -14,23 +14,37 @@
 
 		<!-- tab栏 -->
 		<van-tabs v-model="active" animated swipeable sticky>
+			<!-- tab栏右上角的栏目管理按钮 -->
+			<div class="tab-button">
+				<van-icon
+					name="coupon-o"
+					color="#07c160"
+					size="40"
+					@click="$router.push('/tab-manage')"
+				/>
+			</div>
+
 			<van-tab :title="item.name" v-for="item in tabList" :key="item.id">
-				<!-- 下拉加载更多的组件 -->
-				<van-list
-					v-model="loading"
-					@load="onload"
-					:immediate-check="false"
-					:offset="50"
-					:finished="finished"
-					finished-text="没有更多了"
-				>
-					<!-- tab栏列表下对应的文章列表 -->
-					<hm-article
-						:post="article"
-						v-for="article in articleList"
-						:key="article.id"
-					></hm-article>
-				</van-list>
+				<!-- 下拉刷新van-pull-refresh -->
+				<van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+					<!-- 下拉加载更多的组件van-list -->
+
+					<van-list
+						v-model="loading"
+						@load="onload"
+						:immediate-check="false"
+						:offset="50"
+						:finished="finished"
+						finished-text="没有更多了"
+					>
+						<!-- tab栏列表下对应的文章列表 -->
+						<hm-article
+							:post="article"
+							v-for="article in articleList"
+							:key="article.id"
+						></hm-article>
+					</van-list>
+				</van-pull-refresh>
 			</van-tab>
 		</van-tabs>
 	</div>
@@ -38,6 +52,7 @@
 
 <script>
 export default {
+	name: 'home', //为了在keep-alive中include属性中使用
 	data() {
 		return {
 			active: 0, //激活的tab下标(高亮的那个下标)
@@ -46,10 +61,25 @@ export default {
 			loading: false, //控制下拉更新加载状态
 			pageIndex: 1, //当前页
 			pageSize: 5, //每页的条数
-			finished: false //控制加载完成还有更多数据
+			finished: false, //控制加载完成还有更多数据
+			refreshing: false //下拉的时候refreshing自动变成true,需要加载后再变成true
 		};
 	},
 	created() {
+		/* 
+		需要先从缓存中获取激活的栏目数据
+            如果缓存中没有栏目数据,就发送请求获取数据
+            如果缓存中有数据,且将对应数据给到tab栏分类列表
+		*/
+
+		const activeTab = JSON.parse(localStorage.getItem('activeTab'));
+		// const unactiveTab = JSON.parse(localStorage.getItem('unactiveTab'));
+		if (activeTab) {
+			this.tabList = activeTab;
+			// 发送请求，获取默认选中的文章的数据
+			this.getArticleList(this.tabList[this.active].id);
+			return;
+		}
 		this.getTabList();
 	},
 	methods: {
@@ -93,12 +123,15 @@ export default {
 				// console.log(this.articleList);
 				//请求结束时需要将loading的状态改成false(以便获取更多的数据)
 				this.loading = false;
+				//需要继续加载
+				this.refreshing = false;
 				//判断还有没有更多数据
 				if (data.length < this.pageSize) {
 					this.finished = true; //触发没有更多数据了文本显示
 				}
 			}
 		},
+		//上拉加载更多
 		onload() {
 			// 上拉加载会执行的函数
 			console.log('加载事件');
@@ -107,6 +140,21 @@ export default {
 				this.pageIndex++;
 				this.getArticleList(id);
 			}, 1000);
+		},
+		//下拉刷新
+		onRefresh() {
+			// console.log('下拉触发');
+
+			//重新加载所有的数据 逻辑同切换tab(watch里)
+			this.pageIndex = 1;
+			this.articleList = [];
+			this.finished = false;
+			this.loading = true;
+
+			setTimeout(() => {
+				this.refreshing = false;
+				this.onload();
+			}, 500);
 		}
 	},
 	watch: {
@@ -156,6 +204,17 @@ export default {
 	//tab栏深度作用选择器
 	/deep/.van-tabs__nav {
 		background-color: #dddddd;
+	}
+	.tab-button {
+		width: 30px;
+		height: 30px;
+		background-color: #ddd;
+		.van-icon {
+			position: absolute;
+			top: 0;
+			right: 0;
+			z-index: 999;
+		}
 	}
 }
 </style>

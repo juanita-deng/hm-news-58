@@ -8,10 +8,7 @@
 				<div>{{ comment.user.nickname }}</div>
 				<div>{{ comment.create_date | date2 }}</div>
 			</div>
-			<div
-				class="right"
-				@click="$emit('reply', comment.id, comment.user.nickname)"
-			>
+			<div class="right" @click="reply(comment.id, comment.user.nickname)">
 				<span>回复</span>
 			</div>
 		</div>
@@ -24,8 +21,8 @@
 			:count="getCount(0, comment)"
 			v-if="comment.parent"
 			:comment="comment.parent"
-			@replys="receptFloor"
 		></hm-floor>
+		<!-- 方式一用孙传爷 @replys="receptFloor" -->
 
 		<div class="content">
 			<span>{{ comment.content }}</span>
@@ -42,6 +39,7 @@ export default {
 	components: {
 		HmFloor //注册局部楼层组件
 	},
+
 	methods: {
 		//递归方法,用于统计楼层的层数
 		getCount(num, obj) {
@@ -53,15 +51,18 @@ export default {
 			}
 		},
 		//点击回复 一行代码直接写在html中
-		// reply() {//点击回复的方法函数
-		// 	// console.log("我是评论的id和昵称是：", id, nickname);
-		// 	this.$emit('reply', this.comment.id, this.comment.user.nickname); //把id传给父组件 子传父
-		// },
-		receptFloor(id, nickname) {
-			//接收floor子组件的自定义函数
-			console.log('comment组件接收floor组件传递的数据', id, nickname);
-			this.$emit('reply', id, nickname); //将接收floor的id和nickname传给父组件articleDetail
+		reply(id, nickname) {
+			//点击回复的方法函数
+			// console.log("我是评论的id和昵称是：", id, nickname);
+			// this.$emit('reply', this.comment.id, this.comment.user.nickname); //把id传给父组件 子传父
+			// 触发bus的replys(取决于floor提供)事件
+			this.$bus.$emit('replys', id, nickname); //方式二公交车
 		}
+		// receptFloor(id, nickname) {//方式一：用父子通讯间接实现孙传爷
+		// 	//接收floor子组件的自定义函数
+		// 	console.log('comment组件接收floor组件传递的数据', id, nickname);
+		// 	this.$emit('reply', id, nickname); //将接收floor的id和nickname传给父组件articleDetail
+		// }
 	}
 };
 </script>

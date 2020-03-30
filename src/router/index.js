@@ -21,6 +21,7 @@ import Collection from '../views/Collection.vue'; //导入我的收藏collection
 import Home from '../views/Home.vue'; //导入首页
 import Search from '../views/Search.vue'; //导入搜索页
 import articleDetail from '../views/ArticleDetail.vue'; //导入文章详情
+import TabManage from '../views/TabManage.vue'; //引入首页tab栏管理页面
 
 const router = new VueRouter({
 	routes: [
@@ -41,7 +42,8 @@ const router = new VueRouter({
 			path: '/article-detail/:id', //动态路由
 			component: articleDetail,
 			name: 'article-detail'
-		}
+		},
+		{ path: '/tab-manage', component: TabManage, name: 'tabManage' }
 	]
 });
 

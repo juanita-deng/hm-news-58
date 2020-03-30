@@ -27,6 +27,7 @@
 				<span>{{ detail.create_date | date }}</span>
 			</div>
 		</div>
+
 		<!-- 文章内容-图片类内容 -->
 		<div
 			class="article-content"
@@ -35,6 +36,7 @@
 		>
 			<!-- {{ detail.content }}有标签 -->
 		</div>
+
 		<!-- 文章内容-视频类文章 -->
 		<!-- controls:是否显示控制条(播放进度条)
                    autoplay:控制视频是否自动播放
@@ -66,8 +68,8 @@
 				v-for="item in comments"
 				:key="item.id"
 				:comment="item"
-				@reply="reply"
 			></hm-comments>
+			<!--改用bus @reply="reply" -->
 		</div>
 
 		<!-- 底部 -->
@@ -101,7 +103,7 @@
 export default {
 	data() {
 		return {
-			detail: { user: '' }, //文章详情 解决nickname is undefined
+			detail: { user: {} }, //文章详情 解决nickname is undefined
 			isShow: false, //处理textarea框的显示和隐藏
 			comments: '', //评论数据
 			content: '', //双向绑定评论的内容
@@ -112,6 +114,24 @@ export default {
 	created() {
 		this.getArticleDetail(); //获取文章数据
 		this.getComments(); //获取评论数据
+
+		// 在articleDetail一创建，就给给bus注册一个事件
+		//接收孙子组件hm-floor的指定的事件replys
+		this.$bus.$on('replys', async (id, nickname) => {
+			//以下内容是和方式一reply方法处理一样的事情,代码复制
+			//方式二:用公交车bus处理孙传爷通讯
+			console.log('接收孙子组件hm-floor的数据是', id, nickname);
+			//显示textare框
+			this.isShow = true;
+			//等待dom更新
+			await this.$nextTick();
+			//获取焦点
+			this.$refs.textarea.focus();
+			//父组件需要把子组件的id存起来，因为发送请求有需要
+			//replyNickname是为了回复的占位符中拼接用
+			this.replyId = id;
+			this.replyNickname = nickname;
+		});
 	},
 	methods: {
 		//获取文章详情
@@ -246,8 +266,9 @@ export default {
 				this.replyNickname = '';
 			}
 		},
-		//点击评论组件里点击回复显示textare
+		//方式一:点击评论组件里点击回复显示textare
 		async reply(id, nickname) {
+			//改成bus
 			// console.log('接收子组件hm-commments的数据是', id, nickname);
 			//父组件需要把子组件的id存起来，因为发送请求有需要
 			//replyNickname是为了回复的占位符中拼接用
@@ -263,7 +284,7 @@ export default {
 		async addComment() {
 			const token = localStorage.getItem('token');
 			if (!token) {
-				this.$route.push({
+				this.$router.push({
 					name: 'login',
 					params: {
 						back: true //回跳路由参数

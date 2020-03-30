@@ -5,8 +5,8 @@
 			v-if="comment.parent"
 			:comment="comment.parent"
 			:count="count - 1"
-			@replys="$emit('replys', comment.id, comment.user.nickname)"
 		></hm-floor>
+		<!-- @replys="$emit('replys', comment.id, comment.user.nickname)" -->
 
 		<div class="hm-floor" :class="{ bd: !comment.parent }">
 			<div class="title">
@@ -15,10 +15,7 @@
 					<span>{{ comment.user.nickname }}</span>
 				</div>
 				<div class="center">{{ comment.create_date | date2 }}</div>
-				<div
-					class="right"
-					@click="$emit('replys', comment.id, comment.user.nickname)"
-				>
+				<div class="right" @click="replys(comment.id, comment.user.nickname)">
 					回复
 				</div>
 			</div>
@@ -36,12 +33,12 @@ export default {
 		count: Number //接收父组件传递过来的楼层函数
 	},
 	methods: {
-		//一行代码，在html中,子传爷(子-->父-->爷)
-		// replys(id, nickname) {
-		// 	console.log('floor的数据', id, nickname);
-		// 	this.$emit('replys', id, nickname);
-		// @click="replys(comment.id, comment.user.nickname)
-		// }
+		//一行代码，可写在html中,子传爷(子-->父-->爷)
+		replys(id, nickname) {
+			console.log('floor的数据', id, nickname);
+			// this.$emit('replys', id, nickname);//子传父
+			this.$bus.$emit('replys', id, nickname); //方式二:公交车 非父子通讯
+		}
 	}
 };
 </script>
