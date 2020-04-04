@@ -2,12 +2,13 @@
 
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '../store'; //导入vuex
 
 Vue.use(VueRouter);
 //全局修改router的原型上的push方法
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
-	return originalPush.call(this, location).catch(err => err);
+	return originalPush.call(this, location).catch((err) => err);
 };
 
 import Login from '../views/Login.vue'; //导入登录组件
@@ -41,15 +42,23 @@ const router = new VueRouter({
 		{
 			path: '/article-detail/:id', //动态路由
 			component: articleDetail,
-			name: 'article-detail'
+			name: 'article-detail',
 		},
-		{ path: '/tab-manage', component: TabManage, name: 'tabManage' }
-	]
+		{ path: '/tab-manage', component: TabManage, name: 'tabManage' },
+	],
 });
 
 //在导出路由之前进行注册全局的导航守卫  登录拦截
 const authUrl = ['/user', '/edit', '/focus', '/comments', '/collection']; //需要授权的路径，需要登陆才能访问的路径
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
+	console.log('to:', to);
+	//处理keep-alive
+	if (to.name === 'home') {
+		//如果进入的是首页,需要缓存home组件
+		store.commit('cache', 'home');
+		console.log('home组件被缓存了');
+	}
+
 	// console.log('所有的路由跳转都必须经过导航守卫');
 	// console.log('to:', to);//参数to:到哪里去
 	// console.log('from:', from);//参数from:从哪里来
@@ -63,4 +72,5 @@ router.beforeEach(function(to, from, next) {
 		next(); //放行
 	}
 });
+
 export default router;

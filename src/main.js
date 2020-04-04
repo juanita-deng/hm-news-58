@@ -5,6 +5,7 @@ import './styles/iconfont.css'; //引入字体图标
 import 'lib-flexible'; //导入媒体查询
 import router from './router/index'; //导入路由模块
 import axios from 'axios'; //导入ajax，为了注册全局ajax用
+import store from './store'; //导入vuex
 
 //--------vant-ui处理(方式一：全局导入,不推荐)---------
 // import Vant from 'vant';
@@ -25,7 +26,7 @@ import {
 	Tab,
 	Tabs,
 	Icon,
-	PullRefresh
+	PullRefresh,
 } from 'vant';
 Vue.use(Button);
 Vue.use(Field);
@@ -49,7 +50,7 @@ axios.defaults.baseURL = 'http://localhost:3000'; //axios在发请求的时候�
 //      (比如token7天后过期,还有清楚本地缓存，加一个假的token也能跳过拦截)
 // 优化:判断所有的请求响应，如果某个请求的状态码是401，并且提示消息是“用户信息验证失败”
 //      就拦截跳转到登录页
-axios.interceptors.response.use(res => {
+axios.interceptors.response.use((res) => {
 	// console.log('所有的axios的响应会先经过拦截器', res);
 	const { statusCode, message } = res.data;
 	if (statusCode === 401 && message === '用户信息验证失败') {
@@ -62,7 +63,7 @@ axios.interceptors.response.use(res => {
 });
 //问题：每次都要获取token,user_id
 //解决：设置请求拦截器
-axios.interceptors.request.use(config => {
+axios.interceptors.request.use((config) => {
 	// console.log('拦截了所有的请求', config);
 	//统一给所有的请求添加token 则其他页面的设置响应头里的token可以省去了
 	const token = localStorage.getItem('token');
@@ -94,7 +95,7 @@ Vue.component('hm-comments', HmComments);
 import moment from 'moment';
 Vue.filter('date', (input, str = 'YYYY-MM-DD') => moment(input).format(str)); //str设置默认参数
 //评论区的过滤器
-Vue.filter('date2', input => {
+Vue.filter('date2', (input) => {
 	const time = new Date(input);
 	const now = new Date();
 	const hour = ((now - time) / 1000 / 60 / 60) | 0;
@@ -121,6 +122,7 @@ Vue.prototype.$bus = bus; //把bus绑定到vue的原型上，所有的组件就�
 // })
 //写法二
 new Vue({
-	render: c => c(App),
-	router //关联路由实例
+	render: (c) => c(App),
+	router, //关联路由实例
+	store, //关联vuex实例
 }).$mount('#app');
