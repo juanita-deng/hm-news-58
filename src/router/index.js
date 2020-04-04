@@ -10,19 +10,41 @@ const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
 	return originalPush.call(this, location).catch((err) => err);
 };
+//同步导入组件语法
+// import Login from '../views/Login.vue'; //导入登录组件
+// import Register from '../views/Register.vue'; //导入注册组件
+// import User from '../views/User.vue'; //导入个人中心组件
+// import Edit from '../views/Edit.vue'; //导入个人中心组件
+// import Test from '../views/Test.vue'; //导入个人中心组件
+// import Focus from '../views/Focus.vue'; //导入我的关注
+// import Comments from '../views/Comments.vue'; //导入我的评论
+// import Collection from '../views/Collection.vue'; //导入我的收藏collection
+// import Home from '../views/Home.vue'; //导入首页
+// import Search from '../views/Search.vue'; //导入搜索页
+// import articleDetail from '../views/ArticleDetail.vue'; //导入文章详情
+// import TabManage from '../views/TabManage.vue'; //引入首页tab栏管理页面
 
-import Login from '../views/Login.vue'; //导入登录组件
-import Register from '../views/Register.vue'; //导入注册组件
-import User from '../views/User.vue'; //导入个人中心组件
-import Edit from '../views/Edit.vue'; //导入个人中心组件
-import Test from '../views/Test.vue'; //导入个人中心组件
-import Focus from '../views/Focus.vue'; //导入我的关注
-import Comments from '../views/Comments.vue'; //导入我的评论
-import Collection from '../views/Collection.vue'; //导入我的收藏collection
-import Home from '../views/Home.vue'; //导入首页
-import Search from '../views/Search.vue'; //导入搜索页
-import articleDetail from '../views/ArticleDetail.vue'; //导入文章详情
-import TabManage from '../views/TabManage.vue'; //引入首页tab栏管理页面
+//异步导入组件语法(按需加载)
+//个人中心打包一起
+const Login = () => import(/*webpackChunkName:"user" */ '../views/Login.vue'); //导入登录组件
+const Register = () =>
+	import(/*webpackChunkName:"user" */ '../views/Register.vue'); //导入注册组件
+const User = () => import(/*webpackChunkName:"user" */ '../views/User.vue'); //导入个人中心组件
+const Edit = () => import(/*webpackChunkName:"user" */ '../views/Edit.vue'); //导入个人中心组件
+const Test = () => import(/*webpackChunkName:"user" */ '../views/Test.vue'); //导入个人中心组件
+const Focus = () => import(/*webpackChunkName:"user" */ '../views/Focus.vue'); //导入我的关注
+const Comments = () =>
+	import(/*webpackChunkName:"user" */ '../views/Comments.vue'); //导入我的评论
+const Collection = () =>
+	import(/*webpackChunkName:"user" */ '../views/Collection.vue'); //导入我的收藏collection
+
+//首页模块打包一起
+const Home = () => import(/*webpackChunkName:"home" */ '../views/Home.vue'); //导入首页
+const Search = () => import(/*webpackChunkName:"home" */ '../views/Search.vue'); //导入搜索页
+const articleDetail = () =>
+	import(/*webpackChunkName:"home" */ '../views/ArticleDetail.vue'); //导入文章详情
+const TabManage = () =>
+	import(/*webpackChunkName:"home" */ '../views/TabManage.vue');
 
 const router = new VueRouter({
 	routes: [
