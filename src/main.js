@@ -44,7 +44,7 @@ Vue.use(Icon);
 Vue.use(PullRefresh),
 	//----------------- axios的优化------------------------
 	(Vue.prototype.$axios = axios); //把axios绑定到vue的原型上，所有的组件就可以通过this.$axios({})发送请求
-axios.defaults.baseURL = 'http://localhost:3000'; //axios在发请求的时候，把url的路径自动拼接上baseURL
+axios.defaults.baseURL = '/api'; //axios在发请求的时候，把url的路径自动拼接上baseURL
 //配置axios的响应拦截器
 // 问题:不仅要判断是否有token,还要判断token的时效性
 //      (比如token7天后过期,还有清楚本地缓存，加一个假的token也能跳过拦截)

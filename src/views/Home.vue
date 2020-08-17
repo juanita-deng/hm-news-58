@@ -56,6 +56,13 @@ export default {
       refreshing: false //下拉的时候refreshing自动变成true,需要加载后再变成true
     };
   },
+  beforeRouteEnter(to,from,next){
+    next(vm => {
+      if(from.name === 'article-detail'){
+        vm.onRefresh();
+      }
+    })
+  },
   //离开组件触发的钩子函数 beforeRouteLeave
   beforeRouteLeave(to, from, next) {
     console.log("我要离开组件了");

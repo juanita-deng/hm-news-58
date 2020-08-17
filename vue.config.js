@@ -1,7 +1,16 @@
 module.exports = {
 	devServer: {
 		open: true, //自动打开浏览器
-		port: 8888, //修改端口号
+		port: 3000, //修改端口号
+		//配置反向代理(跨域问题)
+		proxy: {
+			'/api': {
+				target: 'http://localhost:3000', //代理路径
+				pathRewrite: { '^/api': '' }, //路径重写
+				secure: true, //匹配https也能通过访问
+				changeOrigin: true, //修改请求头host信息
+			},
+		},
 	},
 	//配置postcss-px2rem
 	css: {
