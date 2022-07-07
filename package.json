@@ -21,7 +21,7 @@
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "postcss-px2rem": "^0.3.0",
     "vant-ui": "^2.0.2",
     "vue-cropper": "^0.5.2",
